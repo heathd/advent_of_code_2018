@@ -1,3 +1,4 @@
+
 function create(id, x, y, w, h) {
   function toString() {
     return `(${id}: ${x}, ${y}, ${w}, ${h})`
@@ -11,6 +12,23 @@ function create(id, x, y, w, h) {
 
     return p;
   }
+  function coverage() {
+    var covers = []
+    for (var i = x; i < x+w; i++) {
+      for (var j = y; j < y+h; j++) {
+        covers.push([i,j])
+      }
+    }
+    return covers;
+  }
+
+  function overlapsClaim(otherClaim) {
+    return listOverlapsWith(otherClaim).length > 0
+  }
+
+  function listOverlapsWith(otherClaim) {
+    return coverage().filter(c => otherClaim.overlaps(c[0], c[1]))
+  }
 
   return {
     x: x,
@@ -18,10 +36,13 @@ function create(id, x, y, w, h) {
     w: w,
     h: h,
     id: id,
+    coverage: coverage,
     toString: toString,
     overlaps: function(ox, oy) {
       return overlapsX(ox) && overlapsY(oy);
-    }
+    },
+    overlapsClaim: overlapsClaim,
+    listOverlapsWith: listOverlapsWith
   }
 }
 
