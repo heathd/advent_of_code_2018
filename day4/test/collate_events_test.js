@@ -87,4 +87,42 @@ describe('collate_events', function() {
     var collated = collate_events(input)
     assert.strictEqual(collated.get(0).mostFrequentAsleepMinute(), 10)
   })
+
+  it('identifies the number of times asleep on a particular minute', () => {
+    var input = List.of(
+      '[1518-11-04 00:00] Guard #1 begins shift',
+      '[1518-11-04 00:10] falls asleep',
+      '[1518-11-04 00:11] wakes up',
+      '[1518-11-05 00:00] Guard #1 begins shift',
+      '[1518-11-05 00:10] falls asleep',
+      '[1518-11-05 00:11] wakes up',
+      '[1518-11-05 00:14] falls asleep',
+      '[1518-11-05 00:16] wakes up',
+    ).map(Event.parse)
+
+    var collated = collate_events(input)
+    assert.strictEqual(collated.get(0).numberOfTimesAsleepAtMinute(10), 2)
+    assert.strictEqual(collated.get(0).numberOfTimesAsleepAtMinute(0), 0)
+    assert.strictEqual(collated.get(0).numberOfTimesAsleepAtMinute(12), 0)
+    assert.strictEqual(collated.get(0).numberOfTimesAsleepAtMinute(14), 1)
+    assert.strictEqual(collated.get(0).numberOfTimesAsleepAtMinute(15), 1)
+    assert.strictEqual(collated.get(0).numberOfTimesAsleepAtMinute(16), 0)
+  })
+
+  it('identifies the number of times asleep at the most frequent minute', () => {
+    var input = List.of(
+      '[1518-11-04 00:00] Guard #1 begins shift',
+      '[1518-11-04 00:10] falls asleep',
+      '[1518-11-04 00:11] wakes up',
+      '[1518-11-05 00:00] Guard #1 begins shift',
+      '[1518-11-05 00:10] falls asleep',
+      '[1518-11-05 00:11] wakes up',
+      '[1518-11-05 00:14] falls asleep',
+      '[1518-11-05 00:16] wakes up',
+    ).map(Event.parse)
+
+    var collated = collate_events(input)
+    assert.strictEqual(collated.get(0).numberOfTimesAsleepAtMost(), 2)
+  })
+
 });

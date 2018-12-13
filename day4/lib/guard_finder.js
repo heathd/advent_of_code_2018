@@ -14,6 +14,13 @@ function load(input) {
     most_frequent_asleep_minute: function(guardId) {
       var guard = collate_events(ordered).find(g => g.id === guardId)
       return guard.mostFrequentAsleepMinute()
+    },
+    guard_most_frequently_asleep_on_same_minute: function() {
+      var guards = collate_events(ordered)
+      var asleepCounts = guards.map(g => [g, g.numberOfTimesAsleepAtMost()])
+      var sorted = asleepCounts.sortBy(([_, n]) => n)
+      var [guard, _] = sorted.last()
+      return guard
     }
   }
 }

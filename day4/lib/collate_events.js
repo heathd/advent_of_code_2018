@@ -31,21 +31,35 @@ class Guard {
     return totalAsleepMinutes
   }
 
-  mostFrequentAsleepMinute() {
-    function expandSpanToList(span) {
-      var [from, to] = span
-      return Range(from,to).toArray()
-    }
+  expandSpanToList(span) {
+    var [from, to] = span
+    return Range(from,to).toArray()
+  }
 
+  mostFrequentAsleepMinute() {
     return this.sleepSpansByDate
       .valueSeq()
-      .flatMap((spanList) => spanList.flatMap(expandSpanToList))
+      .flatMap((spanList) => spanList.flatMap(this.expandSpanToList))
       .groupBy(v=>v)
       .map(l => l.size)
       .sortBy((size) => size)
       .keySeq()
       .last()
   }
+
+  numberOfTimesAsleepAtMinute(minute) {
+    var listOfSleeps = this.sleepSpansByDate
+      .valueSeq()
+      .flatMap((spanList) => spanList.flatMap(this.expandSpanToList))
+      .groupBy(v=>v)
+      .get(minute)
+    return listOfSleeps ? listOfSleeps.size : 0
+  }
+
+  numberOfTimesAsleepAtMost() {
+    return this.numberOfTimesAsleepAtMinute(this.mostFrequentAsleepMinute())
+  }
+
 }
 
 
